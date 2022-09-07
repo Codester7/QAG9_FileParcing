@@ -1,0 +1,8 @@
+{
+  "name": "Vlad",
+  "isGoodStudent": true,
+  "age": 32,
+  "skill": {
+    "level": "low"
+  }
+}
