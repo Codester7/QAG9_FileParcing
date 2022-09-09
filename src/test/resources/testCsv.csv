@@ -2,3 +2,5 @@ Name,Style,Type
 Дайте Танк!,shy punk,band
 AC/DC,hard rock,band
 Kendric Lamar,rap,performer
+
+List<String[]> csv = csvReader.readAll();

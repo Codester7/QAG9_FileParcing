@@ -16,70 +16,60 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ParcingTestHW1 {
     ClassLoader classLoader = ParcingTestHW1.class.getClassLoader();
-
+    private final File zipFile = new File("src/test/resources/QAG9-tst.zip");
 
 
     @Test
     void zipCsvReaderTest() throws Exception {
-        InputStream is = classLoader.getResourceAsStream("QAG9-tst.zip");
-        ZipInputStream zip = new ZipInputStream(is);
-        ZipEntry entry;
-        while ((entry = zip.getNextEntry()) != null) {
-            if (entry.getName().contains("testCsv.csv")) {
-                try {
-                    CSVReader csvReader = new CSVReader(new InputStreamReader(zip, UTF_8));
-                    List<String[]> csv = csvReader.readAll();
-                    assertThat(csv).contains(
-                            new String[]{"Name", "Style", "Type"},
-                            new String[]{"Дайте Танк!", "shy punk", "band"},
-                            new String[]{"AC/DC", "hard rock", "band"},
-                            new String[]{"Kendric Lamar", "rap", "performer"}
-                    );
-                } finally {
-                    is.close();
-                }
+        String csvFileName = "testCsv.csv";
+
+        try (ZipFile archive = new ZipFile(zipFile)) {
+            ZipEntry csvZipEntry = archive.getEntry(csvFileName);
+            try (InputStream is = archive.getInputStream(csvZipEntry);
+                 InputStreamReader isReader = new InputStreamReader(is, UTF_8);
+                 CSVReader csvReader = new CSVReader(isReader)) {
+                List<String[]> csv = csvReader.readAll();
+                assertThat(csv).contains(
+                        new String[]{"Name", "Style", "Type"},
+                        new String[]{"Дайте Танк!", "shy punk", "band"},
+                        new String[]{"AC/DC", "hard rock", "band"},
+                        new String[]{"Kendric Lamar", "rap", "performer"}
+                );
             }
         }
     }
 
     @Test
     void zipXLSReaderTest() throws Exception {
-        InputStream is = classLoader.getResourceAsStream("QAG9-tst.zip");
-        ZipInputStream zis = new ZipInputStream(is);
-        ZipFile zfile = new ZipFile(new File("src/test/resources/" + "QAG9-tst.zip"));
-        ZipEntry entry;
-        while ((entry = zis.getNextEntry()) != null) {
-            if (entry.getName().contains("file_example_XLS_10.xls")) {
-                try (InputStream stream = zfile.getInputStream(entry)) {
-                    XLS xls = new XLS(stream);
-                    assertThat(
-                            xls.excel.getSheetAt(0)
-                                    .getRow(5)
-                                    .getCell(2)
-                                    .getStringCellValue()
-                    ).contains("Magwood");
-                }
+        String csvFileName = "file_example_XLS_10.xls";
+
+        try (ZipFile archive = new ZipFile(zipFile)) {
+            ZipEntry csvZipEntry = archive.getEntry(csvFileName);
+            try (InputStream is = archive.getInputStream(csvZipEntry)) {
+                XLS xls = new XLS(is);
+                assertThat(
+                        xls.excel.getSheetAt(0)
+                                .getRow(5)
+                                .getCell(2)
+                                .getStringCellValue())
+                        .contains("Magwood");
             }
         }
-
     }
 
 
     @Test
     void zipPdfReaderTest() throws Exception {
-        InputStream is = classLoader.getResourceAsStream("QAG9-tst.zip");
-        ZipInputStream zip = new ZipInputStream(is);
-        ZipEntry entry;
-        ZipFile zfile = new ZipFile(new File("src/test/resources/" + "QAG9-tst.zip"));
-        while ((entry = zip.getNextEntry()) != null) {
-            if (entry.getName().contains("SP-404mk2_reference_v114_eng01.pdf")) {
-                try (InputStream stream = zfile.getInputStream(entry)) {
-                    PDF pdf = new PDF(stream);
-                    assertThat(pdf.numberOfPages).isEqualTo(138);
+        String pdfFileName = "SP-404mk2_reference_v114_eng01.pdf";
 
-                }
+        try (ZipFile archive = new ZipFile(zipFile)) {
+            ZipEntry csvZipEntry = archive.getEntry(pdfFileName);
+            try (InputStream is = archive.getInputStream(csvZipEntry)) {
+                PDF pdf = new PDF(is);
+                assertThat(pdf.numberOfPages).isEqualTo(138);
+
             }
         }
-
     }
+
 }
