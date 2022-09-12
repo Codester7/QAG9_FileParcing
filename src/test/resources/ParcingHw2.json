@@ -1,0 +1,16 @@
+{
+  "firstInfo": {
+    "type": "Dragon",
+    "country": "India",
+    "secondName": "Vritra",
+    "parent": "Danu"
+  },
+  "ability": [
+    "power",
+    "thunder",
+    "lightning"
+  ],
+  "harm": "drain a rivers",
+  "whoKill": "Indra",
+  "mention": 32
+}
